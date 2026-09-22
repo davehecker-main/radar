@@ -1,0 +1,9 @@
+interface:
+  display_name: "Radar"
+  short_description: "Choose and batch the next useful work"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#4E7382"
+  default_prompt: "Use $radar to recommend the next useful task from current project state."
+policy:
+  allow_implicit_invocation: true
