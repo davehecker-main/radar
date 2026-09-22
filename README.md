@@ -17,7 +17,7 @@ The backup-aware installer writes the Claude command `/radar`, the Codex skill `
 - Claude: `/radar <natural-language request>`
 - Codex: mention the request naturally or invoke `$radar`
 
-Radar reads current project state before advising and stops when required reads fail.
+Radar reads current project state before advising and stops when required reads fail. ShareView checkouts and worktrees select the preserved ShareView planning contract; other repositories use the general profile.
 
 ## Documentation
 

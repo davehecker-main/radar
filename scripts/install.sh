@@ -55,5 +55,7 @@ install_copy "$repo_dir/codex/skills/radar/agents/openai.yaml" "$codex_home/skil
 install_copy "$repo_dir/codex/skills/radar/assets/icon.svg" "$codex_home/skills/radar/assets/icon.svg"
 install_copy "$repo_dir/codex/agents/radar.toml" "$codex_home/agents/radar.toml"
 install_copy "$repo_dir/claude/agents/radar.md" "$claude_home/agents/radar.md"
+install_copy "$repo_dir/codex/agents/shareview-radar.toml" "$codex_home/agents/shareview-radar.toml"
+install_copy "$repo_dir/claude/agents/shareview-radar.md" "$claude_home/agents/shareview-radar.md"
 
 printf '\nradar installed globally from %s.\n' "$repo_dir"
