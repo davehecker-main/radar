@@ -12,13 +12,13 @@ collector. Consume existing readiness decisions; do not run a triage procedure.
 **Every invocation, before recommending**, refresh these together:
 
 ```sh
-agentbus state
-agentbus who --repo --coverage
+chattr state
+chattr who --repo --coverage
 git ls-remote --heads origin
 gh pr list --state open --limit 500 --json number,title,headRefName,baseRefName,body,statusCheckRollup
 ```
 
-Ownership comes from `claims` in `agentbus state`: every active claim in this repository,
+Ownership comes from `claims` in `chattr state`: every active claim in this repository,
 however old, each with its resource (`issue:<N>`, `pr:<N>`, `resource:<name>`), note,
 `owner_status`, `stale`, and `mine`. Combine them with issue-number branch claims and PR
 declarations (`Part-of:`/`Finishes:`). A claim whose owner is idle, unknown, or `stale` is
@@ -30,14 +30,14 @@ occupies the work it names; that peer predates claims.
 
 Do not routinely interrogate every peer. Resolve only a shortlisted ambiguous claim with
 its owner when necessary; a recommendation never transfers ownership. The session that takes
-recommended work runs `agentbus claim` first, and a refused claim means it was taken after this
+recommended work runs `chattr claim` first, and a refused claim means it was taken after this
 snapshot. Distinguish this session (`mine`) from peers:
 its own claimed work can continue within its existing authorization.
 
 **Claim coverage:** missing, stale, truncated, or failed coverage means unknown, not unclaimed;
 withhold affected work from Unattended and report the uncertainty. Require both
-`coverage.complete: true` from `agentbus who --repo --coverage` and a `claims` array in
-`agentbus state`; neither alone proves coverage. A `state` without a `claims` array is a bus
+`coverage.complete: true` from `chattr who --repo --coverage` and a `claims` array in
+`chattr state`; neither alone proves coverage. A `state` without a `claims` array is a bus
 that predates claims: ownership is unavailable, so name that blocker rather than asking
 every peer or asking Dave to reconstruct it. Check peer freshness; unknown session status
 is not idle.
