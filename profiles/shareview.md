@@ -12,35 +12,40 @@ collector. Consume existing readiness decisions; do not run a triage procedure.
 **Every invocation, before recommending**, refresh these together:
 
 ```sh
-agentbus state
-agentbus who --repo --coverage
+chattr state
+chattr who --repo --coverage
 git ls-remote --heads origin
 gh pr list --state open --limit 500 --json number,title,headRefName,baseRefName,body,statusCheckRollup
 ```
 
-Ownership comes from `claims` in `agentbus state`: every active claim in this repository,
-however old, each with its resource (`issue:<N>`, `pr:<N>`, `resource:<name>`), note,
-`owner_status`, `stale`, and `mine`. Combine them with issue-number branch claims and PR
-declarations (`Part-of:`/`Finishes:`). A claim whose owner is idle, unknown, or `stale` is
-still held; a branch without a PR can still claim work, and a released claim does not release
-its branch or PR. A claim absent from the list is released, however it ended: drop it from
-follow-up context. A `claim` or `release` line in `broadcasts` is only the echo of this list
-and reserves nothing. A free-text announcement from a live peer that holds no claim still
-occupies the work it names; that peer predates claims.
+For each shortlisted candidate, resolve ownership in this order: `claims` in `chattr state`,
+then issue-number branches and PR `Part-of:`/`Finishes:` declarations, then the issue comments.
+A candidate settled by any step is settled. Each active claim in this repository has a resource
+(`issue:<N>`, `pr:<N>`, `resource:<name>`), note, `owner_status`, `stale`, and `mine`. The bus
+reaps gone owners from `claims`; a claim whose owner is idle, unknown, or `stale` is still held.
+A branch without a PR can still claim work, and releasing a claim does not release its branch
+or PR. A claim absent from the list is released, however it ended: drop it from follow-up
+context. A `claim` or `release` line in `broadcasts` only echoes the claims list and reserves
+nothing. A free-text announcement occupies work only when its sender is present in the current,
+coverage-complete `chattr who --repo` list. An announcement from a session absent or `gone`
+reserves nothing. A full or rolled-over `broadcasts` window is not an ownership gap.
 
-Do not routinely interrogate every peer. Resolve only a shortlisted ambiguous claim with
-its owner when necessary; a recommendation never transfers ownership. The session that takes
-recommended work runs `agentbus claim` first, and a refused claim means it was taken after this
-snapshot. Distinguish this session (`mine`) from peers:
-its own claimed work can continue within its existing authorization.
+One consult, one peer, only for an unclear claim: if the claims, branch/PR declarations, and
+issue comments leave the named resource's owner or scope unresolved, name exactly one
+`chattr consult <session_id>` addressed to that claim's `session_id` in Primary blockers as
+the parent's next action for that resource. Never propose a peer survey, a poll, or asking
+Dave who owns the work. A recommendation never transfers ownership. The session that takes
+recommended work runs `chattr claim` first, and a refused claim means it was taken after this
+snapshot. Distinguish this session (`mine`) from peers: its own claimed work can continue
+within its existing authorization.
 
-**Claim coverage:** missing, stale, truncated, or failed coverage means unknown, not unclaimed;
-withhold affected work from Unattended and report the uncertainty. Require both
-`coverage.complete: true` from `agentbus who --repo --coverage` and a `claims` array in
-`agentbus state`; neither alone proves coverage. A `state` without a `claims` array is a bus
-that predates claims: ownership is unavailable, so name that blocker rather than asking
-every peer or asking Dave to reconstruct it. Check peer freshness; unknown session status
-is not idle.
+**Claim coverage:** require both `coverage.complete: true` from
+`chattr who --repo --coverage` and a `claims` array in `chattr state`. If
+`coverage.complete: false` or a missing `claims` array leaves all ownership unavailable,
+withhold the whole Unattended list and name the failed condition in a Primary blockers row.
+Otherwise, attach uncertainty to each named resource (`issue:<N>`, `pr:<N>`, or
+`resource:<name>`), withhold only its row from Unattended, and name its unresolved evidence
+in Primary blockers. Check peer freshness; unknown session status is not idle.
 
 Collect the repository snapshot on first use; refresh after known changes (including other
 sessions), a phase change, or when one hour old. Before presenting shortlisted work, confirm

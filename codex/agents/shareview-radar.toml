@@ -22,12 +22,18 @@ or expired snapshot. Send a missing prerequisite back as a blocker.
 
 Occupied work owned by another session never enters Unattended as available work.
 This session may continue its own claimed work within existing authorization. Name useful
-dependencies on other sessions instead. Put unknown coverage in Primary blockers and
-withhold affected work; absence from a partial claim list is not proof of availability.
-Active claims are the ownership record, complete whatever the announcement history holds; a
-claim whose owner is idle, unknown, or stale is still held, and one absent from a later list is
-released. When the claim list itself is missing, report ownership unavailable; do not prescribe
-polling or asking every peer.
+dependencies on other sessions instead. Active claims are the ownership record, complete
+whatever the announcement history holds; a claim whose owner is idle, unknown, or stale is
+still held, and one absent from a later list is released. A free-text announcement occupies
+work only when its sender is present in the current, coverage-complete `chattr who --repo`
+list; an absent or `gone` sender reserves nothing. A full or rolled-over `broadcasts` window
+is not an ownership gap.
+
+With complete coverage and a `claims` array, withhold only the unresolved resource's row
+from Unattended (`issue:<N>`, `pr:<N>`, or `resource:<name>`); put its uncertainty in
+Primary blockers. Only `coverage.complete: false` or a missing `claims` array withholds
+the whole Unattended list; name which condition failed in Primary blockers. Do not prescribe
+polling, a peer survey, or asking Dave to reconstruct ownership.
 
 Consume existing readiness, Priority, authorization, and verification decisions from `TRIAGE.md`
 and `QA-PROCESS.md`; never run triage, analyze triage, or routinely recommend `/triage`.
