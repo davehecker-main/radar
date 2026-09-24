@@ -116,7 +116,7 @@ the question text with one concise recommendation; never renumber. Claude's `Ask
 allows at most four options: offer 1–4 as the options and say in the question that Console
 work is chosen by picking Other with a typed `5`. Codex without a question tool asks the same
 numbered question in plain text. Keep every number selectable even when its table is empty;
-never silently drop a category.
+never silently drop a category. When all five tables are empty, ask nothing.
 
 Wait for an explicit number. No answer starts no work; any other reply is a new request.
 An empty category gets “No eligible work” and goes back to the question.

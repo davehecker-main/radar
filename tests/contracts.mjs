@@ -54,7 +54,7 @@ must(command, [
   /1 Unattended batch; 2 Blockers; 3 Priority work; 4 Decisions; 5 Console work/,
   /AskUserQuestion/, /at most four options/i, /Other.*typed `5`/is,
   /never\s+silently drop a category/i, /one concise recommendation/i,
-  /No answer starts no work/i, /empty category.*No eligible work.*back to the question/is,
+  /all five tables are empty, ask nothing/i, /No answer starts no work/i, /empty category.*No eligible work.*back to the question/is,
   /Deduplicate by issue or action/i, /dispatched once/i,
   /Refresh ownership, eligibility, and collision checks/i, /refused claim removes/i,
   /never substitute/i, /newly claimed/i,
