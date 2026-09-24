@@ -14,6 +14,7 @@ collector. Consume existing readiness decisions; do not run a triage procedure.
 ```sh
 chattr state
 chattr who --repo --coverage
+git worktree list --porcelain
 git ls-remote --heads origin
 gh pr list --state open --limit 500 --json number,title,headRefName,baseRefName,body,statusCheckRollup
 ```
@@ -31,21 +32,21 @@ coverage-complete `chattr who --repo` list. An announcement from a session absen
 reserves nothing. A full or rolled-over `broadcasts` window is not an ownership gap.
 
 One consult, one peer, only for an unclear claim: if the claims, branch/PR declarations, and
-issue comments leave the named resource's owner or scope unresolved, name exactly one
-`chattr consult <session_id>` addressed to that claim's `session_id` in Primary blockers as
-the parent's next action for that resource. Never propose a peer survey, a poll, or asking
-Dave who owns the work. A recommendation never transfers ownership. The session that takes
-recommended work runs `chattr claim` first, and a refused claim means it was taken after this
-snapshot. Distinguish this session (`mine`) from peers: its own claimed work can continue
-within its existing authorization.
+issue comments leave the named resource's owner or scope unresolved, name exactly one `chattr
+consult <session_id>` addressed to that claim's `session_id` as the one Blockers row for that
+resource. Never propose a peer survey, a poll, or asking Dave who owns the work. A
+recommendation never transfers ownership. The session that takes recommended work runs `chattr
+claim` first, and a refused claim means it was taken after this snapshot. Distinguish this
+session (`mine`) from peers: its own claimed work can continue within its existing
+authorization.
 
 **Claim coverage:** require both `coverage.complete: true` from
 `chattr who --repo --coverage` and a `claims` array in `chattr state`. If
 `coverage.complete: false` or a missing `claims` array leaves all ownership unavailable,
-withhold the whole Unattended list and name the failed condition in a Primary blockers row.
-Otherwise, attach uncertainty to each named resource (`issue:<N>`, `pr:<N>`, or
-`resource:<name>`), withhold only its row from Unattended, and name its unresolved evidence
-in Primary blockers. Check peer freshness; unknown session status is not idle.
+withhold ownership-dependent work from every table and name the failed condition briefly as
+the prerequisite. Otherwise, attach uncertainty to each named resource (`issue:<N>`, `pr:<N>`,
+or `resource:<name>`) and withhold only that resource from every table. Check peer freshness;
+unknown session status is not idle. Incomplete ownership evidence is unknown, not free work.
 
 Collect the repository snapshot on first use; refresh after known changes (including other
 sessions), a phase change, or when one hour old. Before presenting shortlisted work, confirm
@@ -89,10 +90,9 @@ access failure; do not claim full board coverage or recommend affected work unti
 
 **Repository access is a hard prerequisite.** On a failed, malformed, or incomplete required
 repository read, stop the command immediately: do not spawn or consult Radar; never reuse stale
-results or manufacture a recommendation. Report the read and real error using all three output
-sections: Unattended = “None available — repository state unavailable”; Needs human = the exact
-human action only if known, otherwise “None established”; Primary blockers = failed read, error,
-owner/next step if known, and trustworthy planning as the unlock. There are no candidate tasks.
+results or manufacture a recommendation. Name the failed read and real error in one line, then
+show all five tables, each “No eligible work — repository state unavailable”. There are no
+candidate tasks, so show no question box.
 
 ## Consult and relay
 
@@ -104,6 +104,43 @@ coverage, timestamps, and the question; do not resend unchanged instructions or 
 
 **The answer must appear in the main conversation thread.** The transcript pane is not the user-visible reply.
 After the call returns, emit one assistant response in the parent session with Radar's answer
-unaltered, header included. Do not end the slash-command turn until that response has been sent.
-Add nothing after it except a necessary factual correction. Radar advises; this command never
-starts the recommended work or changes project state.
+unaltered, header included, then the question box below. Do not end the
+slash-command turn until that response has been sent. Radar advises; only this parent may
+carry a selection forward.
+
+## Question box
+
+Immediately after the five tables, ask one question in the host's question UI:
+`1 Unattended batch; 2 Blockers; 3 Priority work; 4 Decisions; 5 Console work`. Put all five in
+the question text with one concise recommendation; never renumber. Claude's `AskUserQuestion`
+allows at most four options: offer 1–4 as the options and say in the question that Console
+work is chosen by picking Other with a typed `5`. Codex without a question tool asks the same
+numbered question in plain text. Keep every number selectable even when its table is empty;
+never silently drop a category. When all five tables are empty, ask nothing.
+
+Wait for an explicit number. No answer starts no work; any other reply is a new request.
+An empty category gets “No eligible work” and goes back to the question.
+Deduplicate by issue or action, so an item listed in several tables is dispatched once.
+
+## Orchestrate the selection
+
+1. Refresh ownership, eligibility, and collision checks with the reads above, then
+   `chattr claim` each selected resource. Drop newly claimed, remotely reserved, or colliding
+   work; a refused claim removes that item. Never race its owner and never substitute unrelated
+   work; if nothing remains, say so and ask again.
+2. Name the session for the category and task. Claude: run
+   `node "$HOME/.claude/hooks/session-title.mjs" "<category>: <task>"`; the title publishes on
+   the next user prompt, so say it is recorded, not applied. Codex titles its own thread; do
+   nothing. Never claim an immediate or verified rename, and never edit private session storage.
+3. State the bounded plan and stopping points. Selection authorizes only the displayed scope
+   under existing permissions and gates; never infer authority for production mutations,
+   credentials, external communications, or prohibited merges. Choosing Decisions starts the
+   decision discussion with Radar's recommendation; it does not decide for Dave or approve
+   implementation.
+4. Delegate independent work to subagents with concrete ownership, context, expected result,
+   and verification. Follow AGENTS.md rule 16: implementation lanes use `isolation: "worktree"`;
+   judge independence across shared state, not only files; shared-file work stays sequential;
+   never dispatch a batch containing a migration; the parent does not implement while lanes run.
+5. Keep each console or operational surface under one driver; read-only research and review
+   subagents may support Decisions and Console work. Lanes stop at open PRs and never merge.
+   Collect results, handle authorized integration sequentially, and report the outcome.
