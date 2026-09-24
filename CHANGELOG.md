@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Resolve ShareView ownership from claims, remote issue evidence, and live sessions; limit uncertainty to affected resources.
+- ShareView: report five numbered tables (Unattended batch, Blockers, Priority work, Decisions, Console work) with quiet collision filtering; the parent asks for a 1–5 selection (four buttons plus a typed `5` where the host allows four), rechecks and claims the work, records the session title honestly, and orchestrates it (sempervire/rex#18).
 
 ## 1.1.0 - 2026-09-21
 
